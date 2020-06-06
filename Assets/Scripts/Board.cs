@@ -22,30 +22,13 @@ public class Board : MonoBehaviour
     [SerializeField]
     private Piece blackPiecePrefab;
 
+    [SerializeField]
+    private Transform pieceHolder;
+
     private void Awake()
     {
         InitGeometry();
         InitBoard();
-    }
-
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            if (IsPointWithinBoardBounds(mouseWorldPosition))
-            {
-                Vector2Int coords = GetCoordsFromWorldPoint(mouseWorldPosition);
-                Debug.Log("Placing piece at " + coords);
-
-                if (!DoesPieceExistAtCoords(coords))
-                {
-                    Debug.Log("Placed piece at " + coords);
-                    PlacePiece(coords);
-                }
-            }
-        }
     }
 
     private void InitGeometry()
@@ -72,28 +55,39 @@ public class Board : MonoBehaviour
         }
     }
 
-    private bool DoesPieceExistAtCoords(Vector2Int coords)
+    public bool DoesPieceExistAtCoords(Vector2Int coords)
     {
         return pieces[coords.y * COORDS_WIDTH + coords.x] != null;
     }
 
-    private void PlacePiece(Vector2Int coords)
+    public void PlaceRedPiece(Vector2Int coords)
     {
-        Vector3 piecePosition = GetWorldPointCenteredAtCoords(coords);
-        var piece = Instantiate(redPiecePrefab, piecePosition, Quaternion.identity);
-        piece.transform.SetParent(transform);
+        Vector2 piecePosition = GetWorldPointCenteredAtCoords(coords);
+        var piece = Instantiate(redPiecePrefab);
+        piece.transform.SetParent(pieceHolder);
+        piece.transform.localPosition = piecePosition;
 
         pieces[coords.y * COORDS_WIDTH + coords.x] = piece;
     }
 
-    private bool IsPointWithinBoardBounds(Vector2 point)
+    public void PlaceBlackPiece(Vector2Int coords)
+    {
+        Vector3 piecePosition = GetWorldPointCenteredAtCoords(coords);
+        var piece = Instantiate(blackPiecePrefab);
+        piece.transform.SetParent(pieceHolder);
+        piece.transform.localPosition = piecePosition;
+
+        pieces[coords.y * COORDS_WIDTH + coords.x] = piece;
+    }
+
+    public bool IsPointWithinBoardBounds(Vector2 point)
     {
         Rect geometryRect = new Rect(geometryStartPosition, geometrySize);
 
         return geometryRect.Contains(point);
     }
 
-    private Vector2Int GetCoordsFromWorldPoint(Vector2 point)
+    public Vector2Int GetCoordsFromWorldPoint(Vector2 point)
     {
         Vector2 deltaPosition = point - geometryStartPosition;
 
@@ -103,7 +97,7 @@ public class Board : MonoBehaviour
         return new Vector2Int(coordsX, coordsY);
     }
 
-    private Vector2 GetWorldPointCenteredAtCoords(Vector2Int coords)
+    public Vector2 GetWorldPointCenteredAtCoords(Vector2Int coords)
     {
         Vector2 deltaPosition = new Vector2(coords.x * TILE_SIZE, coords.y * TILE_SIZE);
 
