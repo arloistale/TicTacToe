@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class CurrentPlayerDisplay : MonoBehaviour
+/// <summary>
+/// UI presenter class that highlights the current player's turn.
+/// </summary>
+public class CurrentPlayerPresenter : MonoBehaviour
 {
     [SerializeField]
     private Image redPlayerIcon;
