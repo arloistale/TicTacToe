@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// Represents a tic tac toe board.
@@ -21,10 +22,10 @@ public class Board : MonoBehaviour
     private const int COORDS_WIDTH = 3;
     private const int COORDS_HEIGHT = 3;
 
-    private const float TILE_SIZE = 1.125f;
+    private const float CELL_SIZE = 1.75f;
 
     [SerializeField]
-    private Tile tilePrefab;
+    private Line linePrefab;
 
     [SerializeField]
     private Piece redPiecePrefab;
@@ -38,39 +39,56 @@ public class Board : MonoBehaviour
     [SerializeField]
     private Transform tileHolder;
 
-    private Vector2 geometryStartPosition;
-    private Vector2 geometrySize;
+    // the logical bounds of the board, which represents the total area the player can interact with
+    private Vector2 boundsStartPoint;
+    private Vector2 boundsSize;
 
-    private Tile[] tiles;
+    private List<Line> lines;
     private Piece[] pieces;
 
     private void Awake()
     {
         CalculateBoardGeometry();
-        InitBoard();
+        InitPieces();
+
+        InitLines();
     }
 
     private void CalculateBoardGeometry()
     {
-        geometrySize = new Vector2(TILE_SIZE * COORDS_WIDTH, TILE_SIZE * COORDS_HEIGHT);
-        geometryStartPosition = new Vector2(transform.position.x - geometrySize.x / 2f, transform.position.y - geometrySize.y / 2f);
+        boundsSize = new Vector2(CELL_SIZE * COORDS_WIDTH, CELL_SIZE * COORDS_HEIGHT);
+        boundsStartPoint = new Vector2(transform.position.x - boundsSize.x / 2f, transform.position.y - boundsSize.y / 2f);
     }
 
-    private void InitBoard()
+    private void InitPieces()
     {
-        tiles = new Tile[COORDS_WIDTH * COORDS_HEIGHT];
         pieces = new Piece[COORDS_WIDTH * COORDS_HEIGHT];
+    }
 
-        for (int r = 0; r < COORDS_HEIGHT; r++)
+    private void InitLines()
+    {
+        lines = new List<Line>();
+
+        Vector2 horizontalLinesStart = new Vector2(transform.position.x, boundsStartPoint.y + CELL_SIZE);
+
+        // draw n - 1 lines in horizontal and vertical directions
+
+        for (int r = 0; r < COORDS_HEIGHT - 1; r++)
         {
-            for (int c = 0; c < COORDS_WIDTH; c++)
-            {
-                Vector2 tilePosition = new Vector2(geometryStartPosition.x + TILE_SIZE / 2f + TILE_SIZE * c, geometryStartPosition.y + TILE_SIZE / 2f + TILE_SIZE * r);
-                var tile = Instantiate(tilePrefab, tilePosition, Quaternion.identity);
-                tile.transform.SetParent(tileHolder);
+            Vector2 lineOrigin = horizontalLinesStart + new Vector2(0f, CELL_SIZE * r);
+            var line = Instantiate(linePrefab, lineOrigin, Quaternion.identity);
+            line.ScaleToLength(new Vector2(CELL_SIZE * COORDS_WIDTH, 0.15f));
+            lines.Add(line);
+        }
 
-                tiles[r * COORDS_WIDTH + c] = tile;
-            }
+        Vector2 verticalLinesStart = new Vector2(boundsStartPoint.x + CELL_SIZE, transform.position.y);
+
+        for (int c = 0; c < COORDS_WIDTH - 1; c++)
+        {
+            Vector2 lineOrigin = verticalLinesStart + new Vector2(CELL_SIZE * c, 0f);
+            var line = Instantiate(linePrefab, lineOrigin, Quaternion.identity);
+            line.ScaleToLength(new Vector2(0.15f, CELL_SIZE * COORDS_HEIGHT));
+            lines.Add(line);
         }
     }
 
@@ -107,17 +125,17 @@ public class Board : MonoBehaviour
 
     public Vector2 GetPointAtCoords(Vector2Int coords)
     {
-        Vector2 deltaPosition = new Vector2(coords.x * TILE_SIZE, coords.y * TILE_SIZE);
+        Vector2 deltaPosition = new Vector2(coords.x * CELL_SIZE, coords.y * CELL_SIZE);
 
-        return geometryStartPosition + Vector2.one * TILE_SIZE / 2f + deltaPosition;
+        return boundsStartPoint + Vector2.one * CELL_SIZE / 2f + deltaPosition;
     }
 
     public Vector2Int GetCoordsAtPoint(Vector2 point)
     {
-        Vector2 deltaPosition = point - geometryStartPosition;
+        Vector2 deltaPosition = point - boundsStartPoint;
 
-        int coordsX = (int)(deltaPosition.x / TILE_SIZE);
-        int coordsY = (int)(deltaPosition.y / TILE_SIZE);
+        int coordsX = (int)(deltaPosition.x / CELL_SIZE);
+        int coordsY = (int)(deltaPosition.y / CELL_SIZE);
 
         return new Vector2Int(coordsX, coordsY);
     }
@@ -129,7 +147,7 @@ public class Board : MonoBehaviour
     /// <param name="point">The given point.</param>
     public bool IsPointWithinBounds(Vector2 point)
     {
-        Rect geometryRect = new Rect(geometryStartPosition, geometrySize);
+        Rect geometryRect = new Rect(boundsStartPoint, boundsSize);
 
         return geometryRect.Contains(point);
     }
