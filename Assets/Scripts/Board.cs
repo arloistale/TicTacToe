@@ -49,9 +49,7 @@ public class Board : MonoBehaviour
     private void Awake()
     {
         CalculateBoardGeometry();
-        InitPieces();
-
-        InitLines();
+        Init();
     }
 
     private void CalculateBoardGeometry()
@@ -60,15 +58,14 @@ public class Board : MonoBehaviour
         boundsStartPoint = new Vector2(transform.position.x - boundsSize.x / 2f, transform.position.y - boundsSize.y / 2f);
     }
 
-    private void InitPieces()
+    private void Init()
     {
         pieces = new Piece[COORDS_WIDTH * COORDS_HEIGHT];
+        lines = new List<Line>();
     }
 
-    private void InitLines()
+    public void SpawnLines()
     {
-        lines = new List<Line>();
-
         Vector2 horizontalLinesStart = new Vector2(transform.position.x, boundsStartPoint.y + CELL_SIZE);
 
         // draw n - 1 lines in horizontal and vertical directions
@@ -78,7 +75,7 @@ public class Board : MonoBehaviour
             Vector2 lineOrigin = horizontalLinesStart + new Vector2(0f, CELL_SIZE * r);
             var line = Instantiate(linePrefab, lineOrigin, Quaternion.identity);
             line.transform.SetParent(lineHolder);
-            line.ScaleToLength(new Vector2(CELL_SIZE * COORDS_WIDTH, 0.15f));
+            line.ScaleHorizontally(CELL_SIZE * COORDS_WIDTH);
             lines.Add(line);
         }
 
@@ -89,12 +86,12 @@ public class Board : MonoBehaviour
             Vector2 lineOrigin = verticalLinesStart + new Vector2(CELL_SIZE * c, 0f);
             var line = Instantiate(linePrefab, lineOrigin, Quaternion.identity);
             line.transform.SetParent(lineHolder);
-            line.ScaleToLength(new Vector2(0.15f, CELL_SIZE * COORDS_HEIGHT));
+            line.ScaleVertically(CELL_SIZE * COORDS_HEIGHT);
             lines.Add(line);
         }
     }
 
-    public void ClearPieces()
+    public void Clear()
     {
         for (int r = 0; r < COORDS_HEIGHT; r++)
         {
@@ -112,6 +109,13 @@ public class Board : MonoBehaviour
         }
 
         pieces = new Piece[COORDS_WIDTH * COORDS_HEIGHT];
+
+        foreach (var line in lines)
+        {
+            Destroy(line.gameObject);
+        }
+
+        lines.Clear();
     }
 
     public void PlacePiece(Vector2Int coords, bool isRed)

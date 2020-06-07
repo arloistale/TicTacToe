@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// Main controller class for the flow of game logic.
@@ -9,7 +10,7 @@ public class GameController : MonoBehaviour
     private Board board;
 
     [SerializeField]
-    private CurrentPlayerPresenter currentPlayerDisplay;
+    private CurrentPlayerPresenter currentPlayerPresenter;
 
     [SerializeField]
     private GameEndedPresenter gameEndedPresenter;
@@ -17,8 +18,12 @@ public class GameController : MonoBehaviour
     private bool isRedTurn;
     private GameState currentState;
 
-    private void Start()
+    private IEnumerator Start()
     {
+        currentPlayerPresenter.Clear();
+
+        yield return new WaitForSeconds(0.25f);
+
         StartNewGame();
     }
 
@@ -27,9 +32,12 @@ public class GameController : MonoBehaviour
         isRedTurn = true;
         currentState = GameState.Playing;
 
-        HighlightCurrentPlayer();
         gameEndedPresenter.ClearVisuals();
-        board.ClearPieces();
+
+        currentPlayerPresenter.Init(isRedTurn);
+
+        board.Clear();
+        board.SpawnLines();
     }
 
     private void EndGame(GameState terminalState)
@@ -106,11 +114,11 @@ public class GameController : MonoBehaviour
     {
         if (isRedTurn)
         {
-            currentPlayerDisplay.HighlightRedPlayer();
+            currentPlayerPresenter.HighlightRedPlayer();
         }
         else
         {
-            currentPlayerDisplay.HighlightBlackPlayer();
+            currentPlayerPresenter.HighlightBlackPlayer();
         }
     }
 }

@@ -7,10 +7,26 @@ using UnityEngine.UI;
 public class CurrentPlayerPresenter : MonoBehaviour
 {
     [SerializeField]
+    private GameObject holderObject;
+
+    [SerializeField]
     private Image redPlayerIcon;
 
     [SerializeField]
     private Image blackPlayerIcon;
+
+    public void Clear()
+    {
+        holderObject.SetActive(false);
+    }
+
+    public void Init(bool isRedPlayerTurn)
+    {
+        holderObject.SetActive(true);
+
+        redPlayerIcon.gameObject.SetActive(isRedPlayerTurn);
+        blackPlayerIcon.gameObject.SetActive(!isRedPlayerTurn);
+    }
 
     public void HighlightRedPlayer()
     {
