@@ -37,7 +37,7 @@ public class Board : MonoBehaviour
     private Transform pieceHolder;
 
     [SerializeField]
-    private Transform tileHolder;
+    private Transform lineHolder;
 
     // the logical bounds of the board, which represents the total area the player can interact with
     private Vector2 boundsStartPoint;
@@ -77,6 +77,7 @@ public class Board : MonoBehaviour
         {
             Vector2 lineOrigin = horizontalLinesStart + new Vector2(0f, CELL_SIZE * r);
             var line = Instantiate(linePrefab, lineOrigin, Quaternion.identity);
+            line.transform.SetParent(lineHolder);
             line.ScaleToLength(new Vector2(CELL_SIZE * COORDS_WIDTH, 0.15f));
             lines.Add(line);
         }
@@ -87,6 +88,7 @@ public class Board : MonoBehaviour
         {
             Vector2 lineOrigin = verticalLinesStart + new Vector2(CELL_SIZE * c, 0f);
             var line = Instantiate(linePrefab, lineOrigin, Quaternion.identity);
+            line.transform.SetParent(lineHolder);
             line.ScaleToLength(new Vector2(0.15f, CELL_SIZE * COORDS_HEIGHT));
             lines.Add(line);
         }

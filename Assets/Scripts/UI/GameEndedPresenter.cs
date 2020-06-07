@@ -6,51 +6,63 @@ using UnityEngine.UI;
 /// </summary>
 public class GameEndedPresenter : MonoBehaviour
 {
-    private static readonly Color32 redPlayerColor = new Color32(255, 0, 0, 255);
-    private static readonly Color32 blackPlayerColor = new Color32(55, 55, 55, 255);
-    private static readonly Color32 drawColor = new Color32(255, 255, 255, 255);
-
-    private static readonly Color32 playerWonTextColor = new Color32(255, 255, 255, 255);
-    private static readonly Color32 drawTextColor = new Color32(55, 55, 55, 255);
+    private static readonly Color32 redBackgroundColor = new Color32(67, 160, 71, 255);
+    private static readonly Color32 blackBackgroundColor = new Color32(67, 160, 71, 255);
+    private static readonly Color32 drawBackgroundColor = new Color32(67, 160, 71, 255);
 
     [SerializeField]
-    private GameObject holderObject;
+    private GameObject visualsHolderObject;
+
+    [SerializeField]
+    private GameObject winnerVisualsHolderObject;
+
+    [SerializeField]
+    private GameObject drawVisualsHolderObject;
 
     [SerializeField]
     private Image backgroundImage;
 
+    // winner visuals fields
+
     [SerializeField]
-    private Text backgroundText;
+    private Image winnerImage;
+
+    [SerializeField]
+    private Sprite redSprite;
+
+    [SerializeField]
+    private Sprite blackSprite;
 
     public void ClearVisuals()
     {
-        holderObject.SetActive(false);
+        visualsHolderObject.SetActive(false);
     }
 
     public void PresentGameEndedVisuals(GameState gameState, bool isRedPlayerWinner)
     {
-        holderObject.SetActive(true);
+        visualsHolderObject.SetActive(true);
 
         if (gameState == GameState.Draw)
         {
-            backgroundImage.color = drawColor;
-            backgroundText.color = drawTextColor;
-            backgroundText.text = "Draw!\nTap to restart";
-            
+            backgroundImage.color = drawBackgroundColor;
+            winnerVisualsHolderObject.SetActive(false);
+            drawVisualsHolderObject.SetActive(true);
             return;
         }
 
         // somebody won
-        backgroundText.color = playerWonTextColor;
-        backgroundText.text = " wins!\nTap to restart";
+        winnerVisualsHolderObject.SetActive(true);
+        drawVisualsHolderObject.SetActive(false);
 
         if (isRedPlayerWinner)
         {
-            backgroundImage.color = redPlayerColor;
+            backgroundImage.color = redBackgroundColor;
+            winnerImage.sprite = redSprite;
         }
         else
         {
-            backgroundImage.color = blackPlayerColor;
+            backgroundImage.color = blackBackgroundColor;
+            winnerImage.sprite = blackSprite;
         }
     }
 }
