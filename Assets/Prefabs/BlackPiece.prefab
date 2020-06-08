@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRed: 0
+  placeSound: {fileID: 8300000, guid: 210e6410d9f364c269896a599bba116c, type: 3}
 --- !u!1 &8102332095509127855
 GameObject:
   m_ObjectHideFlags: 0

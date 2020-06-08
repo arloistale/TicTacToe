@@ -93,7 +93,7 @@ public class GameController : MonoBehaviour
         }
 
         isRedTurn = !isRedTurn;
-        HighlightCurrentPlayer();
+        currentPlayerPresenter.HighlightPlayer(isRedTurn);
     }
 
     private void PlaceCurrentPlayerPiece(Vector2Int coords)
@@ -107,18 +107,6 @@ public class GameController : MonoBehaviour
         {
             Debug.Log("Placed black piece at " + coords);
             board.PlacePiece(coords, isRed: false);
-        }
-    }
-
-    private void HighlightCurrentPlayer()
-    {
-        if (isRedTurn)
-        {
-            currentPlayerPresenter.HighlightRedPlayer();
-        }
-        else
-        {
-            currentPlayerPresenter.HighlightBlackPlayer();
         }
     }
 }

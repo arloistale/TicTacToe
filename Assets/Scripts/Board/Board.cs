@@ -125,6 +125,7 @@ public class Board : MonoBehaviour
         var piece = Instantiate(piecePrefab);
         piece.transform.SetParent(pieceHolder);
         piece.transform.localPosition = piecePosition;
+        piece.Place();
 
         pieces[coords.y * COORDS_WIDTH + coords.x] = piece;
     }
