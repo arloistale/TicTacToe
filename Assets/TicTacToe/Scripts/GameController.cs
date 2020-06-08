@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour
     private Board board;
 
     [SerializeField]
-    private CurrentPlayerPresenter currentPlayerPresenter;
+    private GameStatusPresenter gameStatusPresenter;
 
     [SerializeField]
     private GameEndedPresenter gameEndedPresenter;
@@ -22,7 +22,7 @@ public class GameController : MonoBehaviour
 
     private IEnumerator Start()
     {
-        currentPlayerPresenter.Clear();
+        gameStatusPresenter.Hide();
         gameEndedPresenter.Clear();
 
         yield return new WaitForSeconds(0.25f);
@@ -39,7 +39,7 @@ public class GameController : MonoBehaviour
 
         gameEndedPresenter.Clear();
 
-        currentPlayerPresenter.Init(isRedTurn);
+        gameStatusPresenter.Show(isRedTurn);
 
         board.Clear();
         board.SpawnLines();
@@ -60,7 +60,7 @@ public class GameController : MonoBehaviour
 
     private IEnumerator PresentEndOfGameVisuals(GameState terminalState)
     {
-        currentPlayerPresenter.HighlightEndOfGame();
+        gameStatusPresenter.HighlightEndOfGame();
 
         // wait for a bit
         yield return new WaitForSeconds(1.5f);
@@ -68,10 +68,10 @@ public class GameController : MonoBehaviour
         switch (terminalState)
         {
             case GameState.Draw:
-                gameEndedPresenter.PresentDrawVisuals();
+                gameEndedPresenter.PresentVisualsForDraw();
                 break;
             case GameState.PlayerWon:
-                gameEndedPresenter.PresentPlayerWonVisuals(isRedTurn);
+                gameEndedPresenter.PresentVisualsForPlayerWon(isRedTurn);
                 break;
         }
 
@@ -126,7 +126,7 @@ public class GameController : MonoBehaviour
         if (state == GameState.Playing)
         {
             isRedTurn = !isRedTurn;
-            currentPlayerPresenter.HighlightPlayer(isRedTurn);
+            gameStatusPresenter.HighlightPlayer(isRedTurn);
         }
         else
         {

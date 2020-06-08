@@ -46,7 +46,7 @@ public class GameEndedPresenter : MonoBehaviour
         victoryAudio.Stop();
     }
 
-    public void PresentDrawVisuals()
+    public void PresentVisualsForDraw()
     {
         visualsHolderObject.SetActive(true);
 
@@ -60,7 +60,7 @@ public class GameEndedPresenter : MonoBehaviour
         victoryAudio.Play();
     }
 
-    public void PresentPlayerWonVisuals(bool isRedPlayerWinner)
+    public void PresentVisualsForPlayerWon(bool isRedPlayerWinner)
     {
         visualsHolderObject.SetActive(true);
 

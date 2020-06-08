@@ -3,9 +3,12 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 /// <summary>
-/// UI presenter class that highlights the current player's turn.
+/// UI presenter class that shows the current status of the game.
+/// 
+/// During the game it will highlight the current player's turn,
+/// and at the end of the game it shows 'Game Over'
 /// </summary>
-public class CurrentPlayerPresenter : MonoBehaviour
+public class GameStatusPresenter : MonoBehaviour
 {
     private const float HIGHLIGHT_TRANSITION_DURATION = 0.25f;
 
@@ -24,12 +27,15 @@ public class CurrentPlayerPresenter : MonoBehaviour
     [SerializeField]
     private Text gameOverText;
 
-    public void Clear()
+    public void Hide()
     {
         holderObject.SetActive(false);
     }
 
-    public void Init(bool isRedPlayerTurn)
+    /// <summary>
+    /// Initial function for setting the visuals active.
+    /// </summary>
+    public void Show(bool isRedPlayerTurn)
     {
         holderObject.SetActive(true);
 
@@ -58,6 +64,9 @@ public class CurrentPlayerPresenter : MonoBehaviour
             .SetEase(Ease.InOutBack);
     }
 
+    /// <summary>
+    /// Swaps the player that is highlighted.
+    /// </summary>
     public void HighlightPlayer(bool isRed)
     {
         Image activePlayerIcon = isRed ? redPlayerIcon : blackPlayerIcon;
@@ -79,6 +88,9 @@ public class CurrentPlayerPresenter : MonoBehaviour
             });
     }
 
+    /// <summary>
+    /// Tweens everything out and shows 'Game Over' instead.
+    /// </summary>
     public void HighlightEndOfGame()
     {
         DOTween.Kill(redPlayerIcon.transform);

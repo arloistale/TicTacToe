@@ -21,14 +21,4 @@ public class Piece : MonoBehaviour
 
         placeAudio.Play();
     }
-
-    public void Retract()
-    {
-        transform.DOScale(0f, TWEEN_DURATION)
-            .SetEase(Ease.OutCubic)
-            .OnComplete(() =>
-            {
-                gameObject.SetActive(false);
-            });
-    }
 }

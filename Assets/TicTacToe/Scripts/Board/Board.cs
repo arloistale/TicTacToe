@@ -4,8 +4,8 @@ using System.Collections.Generic;
 /// <summary>
 /// Represents a tic tac toe board.
 /// 
-/// The board consists of tiles and pieces, where tiles make up the grid slots
-/// in the board, and the pieces are placed onto the tiles.
+/// The board consists of pieces and lines, where pieces fall on cells on the grid,
+/// and lines are drawn to separate the cells
 /// 
 /// The pieces are intended to be placed in alternating color and shape based on
 /// the current player. The naming convention "red" and "black" is used to identify
@@ -64,6 +64,10 @@ public class Board : MonoBehaviour
         lines = new List<Line>();
     }
 
+    /// <summary>
+    /// This function should be called at the start of the game to draw the
+    /// lines visualizing the board.
+    /// </summary>
     public void SpawnLines()
     {
         Vector2 horizontalLinesStart = new Vector2(transform.position.x, boundsStartPoint.y + CELL_SIZE);
@@ -91,6 +95,9 @@ public class Board : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Resets the board by clearing all pieces and lines.
+    /// </summary>
     public void Clear()
     {
         for (int r = 0; r < COORDS_HEIGHT; r++)
@@ -118,6 +125,11 @@ public class Board : MonoBehaviour
         lines.Clear();
     }
 
+    /// <summary>
+    /// Puts a piece down at the given coordinates and with the given color.
+    /// </summary>
+    /// <param name="coords">The coordinates.</param>
+    /// <param name="isRed">Whether it is the red or black player.</param>
     public void PlacePiece(Vector2Int coords, bool isRed)
     {
         Vector2 piecePosition = GetPointAtCoords(coords);
