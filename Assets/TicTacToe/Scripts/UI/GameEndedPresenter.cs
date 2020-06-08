@@ -88,7 +88,7 @@ public class GameEndedPresenter : MonoBehaviour
                 v =>
                 {
                     winnerImage.rectTransform.anchoredPosition = new Vector2(winnerImage.rectTransform.anchoredPosition.x, v);
-                }, 100f, 0.5f)
+                }, 60f, 0.5f)
                 .SetEase(Ease.InOutBack)
                 .SetRelative();
 
