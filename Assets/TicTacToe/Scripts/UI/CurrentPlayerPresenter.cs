@@ -21,6 +21,9 @@ public class CurrentPlayerPresenter : MonoBehaviour
     [SerializeField]
     private Text turnText;
 
+    [SerializeField]
+    private Text gameOverText;
+
     public void Clear()
     {
         holderObject.SetActive(false);
@@ -32,6 +35,9 @@ public class CurrentPlayerPresenter : MonoBehaviour
 
         redPlayerIcon.gameObject.SetActive(isRedPlayerTurn);
         blackPlayerIcon.gameObject.SetActive(!isRedPlayerTurn);
+
+        turnText.gameObject.SetActive(true);
+        gameOverText.gameObject.SetActive(false);
 
         if (isRedPlayerTurn)
         {
@@ -71,5 +77,33 @@ public class CurrentPlayerPresenter : MonoBehaviour
             {
                 inactivePlayerIcon.gameObject.SetActive(false);
             });
+    }
+
+    public void HighlightEndOfGame()
+    {
+        DOTween.Kill(redPlayerIcon.transform);
+        DOTween.Kill(blackPlayerIcon.transform);
+
+        var activeIcon = redPlayerIcon.gameObject.activeInHierarchy ? redPlayerIcon : blackPlayerIcon;
+
+        if (redPlayerIcon.gameObject.activeInHierarchy)
+        {
+            redPlayerIcon.transform.localScale = Vector3.one;
+            redPlayerIcon.transform.DOScale(0f, HIGHLIGHT_TRANSITION_DURATION);
+        }
+
+        if (blackPlayerIcon.gameObject.activeInHierarchy)
+        {
+            blackPlayerIcon.transform.localScale = Vector3.one;
+            blackPlayerIcon.transform.DOScale(0f, HIGHLIGHT_TRANSITION_DURATION);
+        }
+
+        turnText.transform.localScale = Vector3.one;
+        turnText.transform.transform.DOScale(0f, 0.25f);
+
+        gameOverText.gameObject.SetActive(true);
+        gameOverText.transform.localScale = Vector3.zero;
+        gameOverText.transform.transform.DOScale(1f, 0.25f)
+            .SetEase(Ease.InOutBack);
     }
 }

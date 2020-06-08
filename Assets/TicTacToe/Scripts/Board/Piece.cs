@@ -3,22 +3,32 @@ using DG.Tweening;
 
 public class Piece : MonoBehaviour
 {
-    private const float PLACE_TWEEN_DURATION = 0.35f;
+    private const float TWEEN_DURATION = 0.35f;
 
     [SerializeField]
     private bool isRed;
 
     [SerializeField]
-    private AudioClip placeSound;
+    private AudioSource placeAudio;
 
     public bool IsRed => isRed;
 
     public void Place()
     {
         transform.localScale = Vector3.zero;
-        transform.DOScale(1f, PLACE_TWEEN_DURATION)
+        transform.DOScale(1f, TWEEN_DURATION)
             .SetEase(Ease.OutBounce);
 
-        AudioSource.PlayClipAtPoint(placeSound, transform.position, 1f);
+        placeAudio.Play();
+    }
+
+    public void Retract()
+    {
+        transform.DOScale(0f, TWEEN_DURATION)
+            .SetEase(Ease.OutCubic)
+            .OnComplete(() =>
+            {
+                gameObject.SetActive(false);
+            });
     }
 }

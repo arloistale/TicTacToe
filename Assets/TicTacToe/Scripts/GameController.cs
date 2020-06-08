@@ -18,9 +18,12 @@ public class GameController : MonoBehaviour
     private bool isRedTurn;
     private GameState currentState;
 
+    private bool isAcceptingInput;
+
     private IEnumerator Start()
     {
         currentPlayerPresenter.Clear();
+        gameEndedPresenter.Clear();
 
         yield return new WaitForSeconds(0.25f);
 
@@ -29,26 +32,57 @@ public class GameController : MonoBehaviour
 
     private void StartNewGame()
     {
+        Debug.Log("Started new game.");
+
         isRedTurn = true;
         currentState = GameState.Playing;
 
-        gameEndedPresenter.ClearVisuals();
+        gameEndedPresenter.Clear();
 
         currentPlayerPresenter.Init(isRedTurn);
 
         board.Clear();
         board.SpawnLines();
+
+        isAcceptingInput = true;
     }
 
     private void EndGame(GameState terminalState)
     {
+        Debug.Log("Ended game with state: " + terminalState);
         currentState = terminalState;
-        gameEndedPresenter.PresentGameEndedVisuals(terminalState, isRedTurn);
+
+        // put a freeze on clicking so the visuals can animate in
+        isAcceptingInput = false;
+
+        StartCoroutine(PresentEndOfGameVisuals(terminalState));
+    }
+
+    private IEnumerator PresentEndOfGameVisuals(GameState terminalState)
+    {
+        currentPlayerPresenter.HighlightEndOfGame();
+
+        // wait for a bit
+        yield return new WaitForSeconds(1.5f);
+
+        switch (terminalState)
+        {
+            case GameState.Draw:
+                gameEndedPresenter.PresentDrawVisuals();
+                break;
+            case GameState.PlayerWon:
+                gameEndedPresenter.PresentPlayerWonVisuals(isRedTurn);
+                break;
+        }
+
+        yield return new WaitForSeconds(1.25f);
+
+        isAcceptingInput = true;
     }
 
     private void Update()
     {
-        if (!Input.GetMouseButtonDown(0))
+        if (!Input.GetMouseButtonDown(0) || !isAcceptingInput)
         {
             return;
         }
@@ -83,30 +117,20 @@ public class GameController : MonoBehaviour
 
     private void MakeCurrentPlayerMove(Vector2Int coords)
     {
-        PlaceCurrentPlayerPiece(coords);
+        Debug.Log("Placing " + (isRedTurn ? "red" : "black") + " piece at " + coords);
+        board.PlacePiece(coords, isRedTurn);
 
-        GameState state = board.GetGameStateAfterMove(isRedTurn, coords);
-        if (state != GameState.Playing)
+        // check board to see if an end condition was reached
+        GameState state = board.CheckGameStateAfterMove(isRedTurn, coords);
+
+        if (state == GameState.Playing)
         {
-            EndGame(state);
-            return;
-        }
-
-        isRedTurn = !isRedTurn;
-        currentPlayerPresenter.HighlightPlayer(isRedTurn);
-    }
-
-    private void PlaceCurrentPlayerPiece(Vector2Int coords)
-    {
-        if (isRedTurn)
-        {
-            Debug.Log("Placed red piece at " + coords);
-            board.PlacePiece(coords, isRed: true);
+            isRedTurn = !isRedTurn;
+            currentPlayerPresenter.HighlightPlayer(isRedTurn);
         }
         else
         {
-            Debug.Log("Placed black piece at " + coords);
-            board.PlacePiece(coords, isRed: false);
+            EndGame(state);
         }
     }
 }

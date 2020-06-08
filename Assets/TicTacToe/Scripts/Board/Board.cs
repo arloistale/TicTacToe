@@ -170,7 +170,7 @@ public class Board : MonoBehaviour
     /// </summary>
     /// <param name="isRedPlayer">Whether it was the red or black player that made a move.</param>
     /// <param name="moveCoords">The coordinates where they made the move</param>
-    public GameState GetGameStateAfterMove(bool isRedPlayer, Vector2Int moveCoords)
+    public GameState CheckGameStateAfterMove(bool isRedPlayer, Vector2Int moveCoords)
     {
         // check horizontal
         for (int c = 0; c < COORDS_WIDTH; c++)
